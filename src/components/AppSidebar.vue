@@ -146,13 +146,16 @@ const menuItems = computed(() => {
     width: 64px !important;
     
     .el-menu-item, .el-sub-menu__title {
-      margin: 8px 10px !important;
+      margin: 8px auto !important;
       border-radius: 8px !important;
       padding: 0 !important;
       width: 44px !important;
+      height: 44px !important;
+      min-height: 44px !important;
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
+      line-height: 1 !important;
 
       .el-icon {
         margin: 0 !important;
