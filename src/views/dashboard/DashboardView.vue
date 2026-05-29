@@ -1,26 +1,26 @@
 <template>
-  <div class="dashboard p-6 space-y-6">
+  <div class="dashboard p-4 sm:p-6 space-y-6">
     <!-- Stat Cards -->
-    <el-row :gutter="20">
-      <el-col v-for="card in statCards" :key="card.label" :xs="24" :sm="12" :md="6">
+    <el-row :gutter="16">
+      <el-col v-for="card in statCards" :key="card.label" :xs="12" :sm="12" :md="6" class="mb-4 sm:mb-4">
         <el-card shadow="never" class="border-none rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <p class="text-sm text-gray-400 font-medium">{{ card.label }}</p>
-              <p class="text-2xl font-bold text-[--text-color]">
+              <p class="text-xs sm:text-sm text-gray-400 font-medium">{{ card.label }}</p>
+              <p class="text-xl sm:text-2xl font-bold text-[--text-color]">
                 {{ loading ? '...' : card.value.toLocaleString() }}
               </p>
             </div>
             <div 
-              class="w-12 h-12 rounded-xl flex-center transition-colors"
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex-center transition-colors"
               :style="{ backgroundColor: card.color + '15', color: card.color }"
             >
-              <el-icon :size="24">
+              <el-icon :size="20" class="sm:text-xl">
                 <component :is="card.icon" />
               </el-icon>
             </div>
           </div>
-          <div class="mt-4 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-green-500">
+          <div class="mt-3 sm:mt-4 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-green-500">
             <el-icon><CaretTop /></el-icon>
             <span>+12% from last month</span>
           </div>
@@ -29,11 +29,11 @@
     </el-row>
 
     <!-- Charts Section -->
-    <el-row :gutter="20">
-      <el-col :md="16">
+    <el-row :gutter="16">
+      <el-col :xs="24" :sm="24" :md="16" class="mb-4 sm:mb-4">
         <el-card shadow="never" class="border-none rounded-xl">
           <template #header>
-            <div class="flex-between">
+            <div class="flex flex-col sm:flex-between gap-2">
               <span class="font-bold text-lg text-[--text-color]">注册趋势（近7天）</span>
               <el-radio-group v-model="chartRange" size="small">
                 <el-radio-button label="7d">7天</el-radio-button>
@@ -41,7 +41,7 @@
               </el-radio-group>
             </div>
           </template>
-          <div class="h-[350px]">
+          <div class="h-[250px] sm:h-[350px]">
             <el-skeleton :loading="loading" animated :rows="10">
               <v-chart v-if="lineOption" :option="lineOption" autoresize class="w-full h-full" />
               <el-empty v-else-if="!loading" description="暂无数据" />
@@ -49,12 +49,12 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :md="8">
+      <el-col :xs="24" :sm="24" :md="8">
         <el-card shadow="never" class="border-none rounded-xl h-full">
           <template #header>
             <span class="font-bold text-lg text-[--text-color]">角色分布</span>
           </template>
-          <div class="h-[350px]">
+          <div class="h-[250px] sm:h-[350px]">
             <el-skeleton :loading="loading" animated :rows="10">
               <v-chart v-if="pieOption" :option="pieOption" autoresize class="w-full h-full" />
               <el-empty v-else-if="!loading" description="暂无数据" />
@@ -69,28 +69,28 @@
       <template #header>
         <div class="flex-between">
           <span class="font-bold text-lg text-[--text-color]">最近活动</span>
-          <el-button link type="primary">查看全部</el-button>
+          <el-button link type="primary" class="hidden sm:block">查看全部</el-button>
         </div>
       </template>
       <el-skeleton :loading="loading" animated :count="5">
-        <div class="space-y-4">
+        <div class="space-y-3 sm:space-y-4">
           <div 
             v-for="activity in recentActivities" 
             :key="activity.id"
-            class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+            class="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
-            <el-avatar :size="40" class="bg-primary/10 text-primary">
+            <el-avatar :size="36" class="bg-primary/10 text-primary hidden sm:flex">
               {{ activity.username.charAt(0).toUpperCase() }}
             </el-avatar>
-            <div class="flex-1">
-              <p class="text-sm font-bold text-[--text-color]">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-[--text-color] truncate">
                 {{ activity.username }} 
                 <span class="font-normal text-gray-400">执行了</span> 
                 {{ activity.action }}
               </p>
               <p class="text-xs text-gray-400 mt-1">{{ formatDate(activity.createTime) }}</p>
             </div>
-            <el-tag :type="activity.status === 1 ? 'success' : 'danger'" size="small" round>
+            <el-tag :type="activity.status === 1 ? 'success' : 'danger'" size="small" round class="flex-shrink-0">
               {{ activity.status === 1 ? '成功' : '失败' }}
             </el-tag>
           </div>

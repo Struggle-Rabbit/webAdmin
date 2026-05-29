@@ -30,3 +30,83 @@ ul,
 ol {
   list-style: none;
 }
+
+/* 全局响应式字体大小 */
+html {
+  font-size: 14px;
+}
+
+@media (max-width: 767px) {
+  html {
+    font-size: 13px;
+  }
+  
+  /* 移动端表格适配 */
+  .el-table {
+    font-size: 12px;
+  }
+  
+  /* 移动端表单适配 */
+  .el-form-item__label {
+    font-size: 12px;
+  }
+  
+  /* 移动端卡片适配 */
+  .el-card__header {
+    padding: 12px 16px;
+  }
+  
+  .el-card__body {
+    padding: 12px 16px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  html {
+    font-size: 13.5px;
+  }
+}
+
+/* 隐藏滚动条但保持可滚动 */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 防止移动端文本溢出 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 移动端触摸优化 */
+@media (max-width: 767px) {
+  /* 增加可点击区域 */
+  .el-button {
+    min-height: 36px;
+  }
+  
+  /* 优化表格在移动端的显示 */
+  .el-table {
+    overflow-x: auto;
+  }
+  
+  /* 优化分页组件在移动端的显示 */
+  .el-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .el-pagination .el-pagination__sizes {
+    display: none;
+  }
+  
+  .el-pagination .el-pagination__jump {
+    display: none;
+  }
+}

@@ -6,15 +6,17 @@
         @click="appStore.toggleSidebar"
       >
         <el-icon :size="20" class="text-[--text-color]">
-          <Fold v-if="!appStore.sidebarCollapsed" />
+          <Fold v-if="!appStore.sidebarCollapsed && !appStore.isMobile" />
           <Expand v-else />
         </el-icon>
       </div>
-      <AppBreadcrumb />
+      <div class="hidden sm:block">
+        <AppBreadcrumb />
+      </div>
     </div>
     
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-3 mr-2">
+    <div class="flex items-center gap-2 sm:gap-4">
+      <div class="hidden sm:flex items-center gap-3 mr-2">
         <el-tooltip content="全屏" placement="bottom">
           <div class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors" @click="toggleFullscreen">
             <el-icon :size="18" class="text-[--text-color]"><FullScreen /></el-icon>
@@ -37,7 +39,7 @@
           >
             <template #icon><UserFilled /></template>
           </el-avatar>
-          <div class="hidden sm:flex flex-col items-start leading-tight">
+          <div class="hidden md:flex flex-col items-start leading-tight">
             <span class="text-sm font-bold text-[--text-color]">{{ authStore.userInfo?.nickname || authStore.userInfo?.username }}</span>
             <span class="text-[10px] text-gray-400 uppercase tracking-wider">{{ authStore.userInfo?.roles?.[0]?.name || 'User' }}</span>
           </div>
@@ -98,5 +100,19 @@ function handleCommand(command: string) {
 .app-header {
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   z-index: 10;
+}
+
+/* 移动端适配 */
+@media (max-width: 767px) {
+  .app-header {
+    padding: 0 12px;
+  }
+}
+
+/* 平板适配 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .app-header {
+    padding: 0 14px;
+  }
 }
 </style>

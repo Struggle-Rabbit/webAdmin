@@ -1,40 +1,42 @@
 <template>
-  <div class="menu-view">
+  <div class="menu-view p-4 sm:p-0">
     <el-card class="table-card">
-      <div class="table-toolbar">
+      <div class="table-toolbar mb-4">
         <div />
         <div>
           <el-button v-permission="'menu:create'" type="primary" @click="handleAdd(null)">新增菜单</el-button>
         </div>
       </div>
-      <el-table v-loading="loading" :data="menuList" row-key="id" stripe border default-expand-all :tree-props="{ children: 'children' }">
-        <el-table-column prop="name" label="菜单名称" />
-        <el-table-column prop="icon" label="图标" width="60" align="center">
-          <template #default="{ row }">
-            <el-icon v-if="row.icon"><component :is="row.icon" /></el-icon>
-          </template>
-        </el-table-column>
-        <el-table-column prop="type" label="类型" width="80">
-          <template #default="{ row }">
-            <el-tag :type="row.type === 'menu' ? 'primary' : 'warning'" size="small">{{ row.type === 'menu' ? '菜单' : '按钮' }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="path" label="路由路径" />
-        <el-table-column prop="permission" label="权限码" />
-        <el-table-column prop="sort" label="排序" width="80" align="center" />
-        <el-table-column label="状态" width="80" align="center">
-          <template #default="{ row }">
-            <el-switch :model-value="row.visible" @change="handleToggleVisible(row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
-          <template #default="{ row }">
-            <el-button v-permission="'menu:create'" type="primary" link size="small" @click="handleAdd(row)">添加子级</el-button>
-            <el-button v-permission="'menu:edit'" type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button v-permission="'menu:delete'" type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="overflow-x-auto">
+        <el-table v-loading="loading" :data="menuList" row-key="id" stripe border default-expand-all class="w-full" :tree-props="{ children: 'children' }">
+          <el-table-column prop="name" label="菜单名称" min-width="120" />
+          <el-table-column prop="icon" label="图标" width="60" align="center" class-name="hidden sm:table-cell">
+            <template #default="{ row }">
+              <el-icon v-if="row.icon"><component :is="row.icon" /></el-icon>
+            </template>
+          </el-table-column>
+          <el-table-column prop="type" label="类型" width="80">
+            <template #default="{ row }">
+              <el-tag :type="row.type === 'menu' ? 'primary' : 'warning'" size="small">{{ row.type === 'menu' ? '菜单' : '按钮' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="path" label="路由路径" min-width="120" class-name="hidden md:table-cell" />
+          <el-table-column prop="permission" label="权限码" min-width="120" class-name="hidden lg:table-cell" />
+          <el-table-column prop="sort" label="排序" width="80" align="center" class-name="hidden sm:table-cell" />
+          <el-table-column label="状态" width="80" align="center">
+            <template #default="{ row }">
+              <el-switch :model-value="row.visible" @change="handleToggleVisible(row)" />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" :width="isMobile ? '150' : '200'" :fixed="isMobile ? false : 'right'">
+            <template #default="{ row }">
+              <el-button v-permission="'menu:create'" type="primary" link size="small" @click="handleAdd(row)">添加子级</el-button>
+              <el-button v-permission="'menu:edit'" type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
+              <el-button v-permission="'menu:delete'" type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-card>
 
     <el-dialog
@@ -93,10 +95,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useResponsive } from '@/composables/useResponsive'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { getMenuListApi, createMenuApi, updateMenuApi, deleteMenuApi } from '@/api/menu'
 import type { MenuInfo } from '@/types'
+
+const { isMobile } = useResponsive()
 
 const loading = ref(false)
 const menuList = ref<MenuInfo[]>([])

@@ -1,17 +1,17 @@
 <template>
-  <div class="log-view">
-    <el-card class="search-card">
-      <el-form :model="query" inline>
-        <el-form-item label="类型">
-          <el-select v-model="query.type" placeholder="全部" clearable style="width: 120px" @change="handleSearch">
+  <div class="log-view p-4 sm:p-0">
+    <el-card class="search-card mb-4">
+      <el-form :model="query" :inline="!isMobile" class="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+        <el-form-item label="类型" class="w-full sm:w-auto">
+          <el-select v-model="query.type" placeholder="全部" clearable class="w-full sm:w-[120px]" @change="handleSearch">
             <el-option label="操作日志" value="operation" />
             <el-option label="登录日志" value="login" />
           </el-select>
         </el-form-item>
-        <el-form-item label="关键词">
-          <el-input v-model="query.keyword" placeholder="用户名/操作" clearable @keyup.enter="handleSearch" />
+        <el-form-item label="关键词" class="w-full sm:w-auto">
+          <el-input v-model="query.keyword" placeholder="用户名/操作" clearable class="w-full sm:w-auto" @keyup.enter="handleSearch" />
         </el-form-item>
-        <el-form-item label="时间范围">
+        <el-form-item label="时间范围" class="w-full sm:w-auto">
           <el-date-picker
             v-model="dateRange"
             type="datetimerange"
@@ -19,50 +19,55 @@
             range-separator="至"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
+            class="w-full sm:w-auto"
             @change="handleDateChange"
           />
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-          <el-button @click="handleReset">重置</el-button>
+        <el-form-item class="w-full sm:w-auto">
+          <div class="flex gap-2 w-full sm:w-auto">
+            <el-button type="primary" class="flex-1 sm:flex-none" @click="handleSearch">搜索</el-button>
+            <el-button class="flex-1 sm:flex-none" @click="handleReset">重置</el-button>
+          </div>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card class="table-card">
-      <div class="table-toolbar">
+      <div class="table-toolbar mb-4">
         <div />
         <div>
           <el-button v-permission="'log:export'" type="warning" @click="handleExport">导出日志</el-button>
         </div>
       </div>
-      <el-table v-loading="loading" :data="logList" stripe border @row-click="handleRowClick">
-        <el-table-column prop="id" label="ID" width="60" />
-        <el-table-column prop="type" label="类型" width="80">
-          <template #default="{ row }">
-            <el-tag :type="row.type === 'login' ? 'info' : 'primary'" size="small">{{ row.type === 'login' ? '登录' : '操作' }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="username" label="用户名" />
-        <el-table-column prop="action" label="操作" />
-        <el-table-column prop="target" label="目标" />
-        <el-table-column prop="ip" label="IP" />
-        <el-table-column label="状态" width="70">
-          <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">{{ row.status === 1 ? '成功' : '失败' }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="时间" width="170">
-          <template #default="{ row }">{{ row.createTime?.slice(0, 16) }}</template>
-        </el-table-column>
-      </el-table>
-      <div class="table-pagination">
+      <div class="overflow-x-auto">
+        <el-table v-loading="loading" :data="logList" stripe border class="w-full" @row-click="handleRowClick">
+          <el-table-column prop="id" label="ID" width="60" />
+          <el-table-column prop="type" label="类型" width="80">
+            <template #default="{ row }">
+              <el-tag :type="row.type === 'login' ? 'info' : 'primary'" size="small">{{ row.type === 'login' ? '登录' : '操作' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="username" label="用户名" min-width="100" />
+          <el-table-column prop="action" label="操作" min-width="120" />
+          <el-table-column prop="target" label="目标" min-width="120" />
+          <el-table-column prop="ip" label="IP" min-width="120" class-name="hidden md:table-cell" />
+          <el-table-column label="状态" width="70">
+            <template #default="{ row }">
+              <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">{{ row.status === 1 ? '成功' : '失败' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="时间" width="170" class-name="hidden sm:table-cell">
+            <template #default="{ row }">{{ row.createTime?.slice(0, 16) }}</template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="table-pagination mt-4">
         <el-pagination
           v-model:current-page="query.page"
           v-model:page-size="query.pageSize"
           :total="total"
           :page-sizes="[10, 20, 50]"
-          layout="total, sizes, prev, pager, next"
+          :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next'"
           @change="fetchData"
         />
       </div>
@@ -89,9 +94,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useResponsive } from '@/composables/useResponsive'
 import { ElMessage } from 'element-plus'
 import { getLogListApi, getLogDetailApi, exportLogsApi } from '@/api/log'
 import type { LogInfo } from '@/types'
+
+const { isMobile } = useResponsive()
 
 const loading = ref(false)
 const logList = ref<LogInfo[]>([])

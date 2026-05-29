@@ -41,7 +41,7 @@ export const asyncRoutes: RouteRecordRaw[] = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/DashboardView.vue'),
-        meta: { title: '仪表盘', icon: 'Odometer' },
+        meta: { title: '仪表盘', icon: 'Odometer', affix: true },
       },
       {
         path: 'users',

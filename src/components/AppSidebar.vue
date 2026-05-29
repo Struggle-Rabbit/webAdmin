@@ -1,7 +1,12 @@
 <template>
   <div 
     class="sidebar h-screen bg-[#001529] text-white transition-all duration-300 overflow-hidden flex flex-col shadow-xl z-20" 
-    :style="{ width: appStore.sidebarCollapsed ? '64px' : '240px' }"
+    :class="{
+      'sidebar-mobile': appStore.isMobile,
+      'sidebar-visible': appStore.isMobile && appStore.mobileSidebarVisible,
+      'sidebar-collapsed': appStore.sidebarCollapsed && !appStore.isMobile
+    }"
+    :style="{ width: appStore.isMobile ? '240px' : (appStore.sidebarCollapsed ? '64px' : '240px') }"
   >
     <!-- Logo 区域 -->
     <div class="sidebar-logo h-[--header-height] flex items-center border-b border-white/5 overflow-hidden" :class="appStore.sidebarCollapsed ? 'justify-center' : 'px-5'">
@@ -66,7 +71,7 @@
     </div>
     
     <!-- 底部状态 -->
-    <div class="p-4 border-t border-white/5 transition-all duration-300" :class="appStore.sidebarCollapsed ? 'opacity-0 h-0 p-0 overflow-hidden' : 'opacity-100'">
+    <div class="p-4 border-t border-white/5 transition-all duration-300" :class="appStore.sidebarCollapsed && !appStore.isMobile ? 'opacity-0 h-0 p-0 overflow-hidden' : 'opacity-100'">
       <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3">
         <div class="w-8 h-8 rounded-full bg-green-500/20 flex-center">
           <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -104,6 +109,35 @@ const menuItems = computed(() => {
 <style scoped lang="scss">
 .sidebar {
   user-select: none;
+}
+
+/* 移动端抽屉式侧边栏 */
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: -240px;
+  height: 100vh;
+  z-index: 20;
+  transition: left 0.3s ease;
+}
+
+.sidebar-visible {
+  left: 0;
+}
+
+/* 桌面端收起状态 */
+.sidebar-collapsed {
+  width: 64px;
+}
+
+/* 移动端菜单项样式调整 */
+@media (max-width: 767px) {
+  :deep(.el-menu) {
+    .el-menu-item, .el-sub-menu__title {
+      height: 52px !important;
+      line-height: 52px !important;
+    }
+  }
 }
 
 :deep(.el-menu) {
@@ -149,22 +183,45 @@ const menuItems = computed(() => {
       margin: 8px auto !important;
       border-radius: 8px !important;
       padding: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
       width: 44px !important;
       height: 44px !important;
       min-height: 44px !important;
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
+      text-align: center !important;
       line-height: 1 !important;
+      position: relative !important;
+
+      &::before {
+        display: none !important;
+      }
+
+      // 覆盖 Element Plus 内部包装元素的样式
+      .el-menu-tooltip__trigger,
+      .el-tooltip__trigger {
+        padding: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+      }
 
       .el-icon {
         margin: 0 !important;
+        padding: 0 !important;
         font-size: 20px !important;
         width: 20px !important;
         height: 20px !important;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
+        flex-shrink: 0 !important;
+        vertical-align: middle !important;
         
         svg {
           width: 1em;

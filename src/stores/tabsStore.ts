@@ -28,7 +28,7 @@ export const useTabsStore = defineStore('tabs', () => {
       title: (route.meta?.title as string) || name,
       name,
       path: route.path,
-      closable: tabs.value.length > 1,
+      closable: !route.meta?.affix,
     })
     activeTab.value = name
   }
@@ -57,10 +57,10 @@ export const useTabsStore = defineStore('tabs', () => {
   function refreshTab(name: string) {
     const tab = tabs.value.find((t) => t.name === name)
     if (tab) {
-      const path = tab.path
+      const { title, path, closable } = tab
       tabs.value = tabs.value.filter((t) => t.name !== name)
       setTimeout(() => {
-        tabs.value.push({ ...tab, path })
+        tabs.value.push({ title, name, path, closable })
       }, 0)
     }
   }
